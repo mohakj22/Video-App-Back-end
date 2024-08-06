@@ -3,6 +3,7 @@ import { app } from "./app.js";
 import connectDB from "./db/index.js";
 dotenv.config({ path: "./env" });
 connectDB()
+    // If db is connected  then start listening on the port else go in the catch part and throw error
     .then(() => {
         app.on("error", (error) => {
             console.log("ERROR : ", error);

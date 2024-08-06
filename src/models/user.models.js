@@ -32,6 +32,7 @@ const userSchema = new Schema(
         coverImage: {
             type: String, // url from cloudanary
         },
+        // Watch history is going to be an array of videos. So we will use video modal to store the information of watched videos.
         watchHistory: [
             {
                 type: Schema.Types.ObjectId,
@@ -48,10 +49,13 @@ const userSchema = new Schema(
     },
     { timestamps: true }
 );
+// Pre is a middleware in mongoose it is a hook in mongoose.
+// it works on some events like here we are using this for the "save" event.
 // userSchema.pre("save", () => {})
 // it is not advisable to write callback using arrow function because arrow function doesn't hvae refrence or in other words we can't use this.
 // encryption and other things like this takes some time for encryption as some algorithms runs and then encryption happens so these are written using async functions
 userSchema.pre("save", async function (next) {
+    // this is modified function is method in mogoose which automatically detects  whether a particular field has been modified or not.
     if (!this.isModified("password")) return next();
     this.password = bcrypt.hash(this.password, 10);
     next();
@@ -65,7 +69,7 @@ userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {
             _id: this._id,
-            email: this.email,
+            email: this.email, 
             username: this.username,
             fullName: this.fullName,
         },
