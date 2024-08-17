@@ -27,7 +27,7 @@ const userSchema = new Schema(
         },
         avatar: {
             type: String, // url from cloudanary
-            required: true,
+            // required: true,
         },
         coverImage: {
             type: String, // url from cloudanary
@@ -57,12 +57,13 @@ const userSchema = new Schema(
 userSchema.pre("save", async function (next) {
     // this is modified function is method in mogoose which automatically detects  whether a particular field has been modified or not.
     if (!this.isModified("password")) return next();
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
     next();
 });
 
 // Defining a method to check for password when a user try to login into his account
 userSchema.methods.isPasswordCorrect = async function (password) {
+    // This compare method will match the password stored in db with the entered password
     return await bcrypt.compare(password, this.password);
 };
 userSchema.methods.generateAccessToken = function () {
